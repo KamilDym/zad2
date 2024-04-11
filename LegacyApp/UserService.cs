@@ -4,23 +4,34 @@ namespace LegacyApp
 {
     public class UserService
     {
+        private readonly IUserService _userValidator;
+
+        public UserService()
+        {
+            _userValidator = new UserValidator();
+        }
+
+       
+
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+            
+            if (!_userValidator.IsValidFistName(firstName))
+            {
+                return false;
+            }
+            
+            if (!_userValidator.IsValidLastName(lastName))
             {
                 return false;
             }
 
-            if (!email.Contains("@") && !email.Contains("."))
+            if (!_userValidator.IsValidEmail(email))
             {
                 return false;
             }
 
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
-
-            if (age < 21)
+            if (!_userValidator.IsValidAge(dateOfBirth))
             {
                 return false;
             }
